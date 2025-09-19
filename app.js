@@ -4,11 +4,14 @@ const todoList = document.querySelector(".list-group");
 const cardBody = document.querySelector(".card-body");
 const clearButton = document.querySelector("#clearButton");
 
+let todos = [];
 
 runEvents();
 
+
 function runEvents() {
 	form.addEventListener("submit" ,addTodo);
+	document.addEventListener("DOMContentLoaded", loaded);
 }
 
 function addTodo(e) {
@@ -16,7 +19,9 @@ function addTodo(e) {
 if(inputText==null || inputText ==""){
 	alert("Değer giriniz.");
 }else {
-	addTodoToUI(inputText); //* arayüzze ekleme
+	addTodoToUI(inputText); //* arayüze ekleme
+	addTodoToStorage(inputText); //* storageye ekle
+	showAlert("success","Todo başarıyla eklendi.");
 	
 }
 	e.preventDefault();
@@ -50,4 +55,41 @@ todoList.appendChild(li);
 addInput.value= "";
 
 			  
+}
+
+function addTodoToStorage(newTodo){
+	checkTodoFromStorage();
+	todos.push(newTodo);
+	localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function checkTodoFromStorage(){
+ if(localStorage.getItem("todos")=== null) {
+	todos = [];
+ }else {
+	todos = JSON.parse(localStorage.getItem("todos"));
+ }
+}
+
+function showAlert(type,message) {
+// 	       <div class="alert alert-primary" role="alert">
+//   A simple primary alert—check it out!
+// </div>
+const div = document.createElement("div");
+div.className= `alert alert-${type}`;
+div.textContent= message;
+
+form.appendChild(div);
+
+setTimeout(() => {
+	div.remove();
+}, 1500);
+}
+
+function loaded(){
+	// sayfa yüklendiğinde storagedeki değerler arayüzde görünecek
+	checkTodoFromStorage();
+	todos.forEach(function(todo){
+		addTodoToUI(todo);
+	})
 }
